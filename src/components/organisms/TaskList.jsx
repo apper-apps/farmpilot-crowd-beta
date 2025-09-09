@@ -156,14 +156,14 @@ const TaskList = ({ tasks, farms, crops, onToggleComplete, onEdit, onDelete }) =
                                   {task.title}
                                 </h4>
                                 <div className="flex items-center space-x-2 mt-1">
-                                  <span className="text-sm text-gray-500">
-                                    {getFarmName(task.farmId)}
-                                  </span>
-                                  {task.cropId && (
+<span className="text-sm text-gray-500">
+                                    {getFarmName(task.farm_id_c?.Id || task.farmId)}
+</span>
+                                  {(task.crop_id_c?.Id || task.cropId) && (
                                     <>
                                       <span className="text-gray-300">•</span>
                                       <span className="text-sm text-gray-500">
-                                        {getCropName(task.cropId)}
+                                        {getCropName(task.crop_id_c?.Id || task.cropId)}
                                       </span>
                                     </>
                                   )}
@@ -172,8 +172,8 @@ const TaskList = ({ tasks, farms, crops, onToggleComplete, onEdit, onDelete }) =
                             </div>
 
                             <div className="flex items-center space-x-2">
-                              <Badge variant={getPriorityVariant(task.priority)} className="text-xs">
-                                {task.priority}
+<Badge variant={getPriorityVariant(task.priority_c || task.priority)} className="text-xs">
+                                {task.priority_c || task.priority}
                               </Badge>
                               <div className="flex space-x-1">
                                 <Button

@@ -73,26 +73,26 @@ const CropTable = ({ crops, farms, onEdit, onDelete }) => {
                         <ApperIcon name="Sprout" className="h-5 w-5 text-white" />
                       </div>
                       <div>
-                        <p className="font-semibold text-gray-900">{crop.cropType}</p>
+<p className="font-semibold text-gray-900">{crop.crop_type_c || crop.cropType}</p>
                         <p className="text-sm text-gray-500">ID: {crop.Id}</p>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 text-gray-700 font-medium">
-                    {getFarmName(crop.farmId)}
+{getFarmName(crop.farm_id_c?.Id || crop.farmId)}
                   </td>
                   <td className="px-6 py-4 text-gray-600">
-                    {crop.field}
+{crop.field_c || crop.field}
                   </td>
                   <td className="px-6 py-4 text-gray-600">
-                    {format(new Date(crop.plantingDate), "MMM dd, yyyy")}
+{format(new Date(crop.planting_date_c || crop.plantingDate), "MMM dd, yyyy")}
                   </td>
                   <td className="px-6 py-4 text-gray-600">
-                    {format(new Date(crop.expectedHarvest), "MMM dd, yyyy")}
+{format(new Date(crop.expected_harvest_c || crop.expectedHarvest), "MMM dd, yyyy")}
                   </td>
                   <td className="px-6 py-4">
-                    <Badge variant={getStatusVariant(crop.status)}>
-                      {crop.status}
+<Badge variant={getStatusVariant(crop.status_c || crop.status)}>
+                      {crop.status_c || crop.status}
                     </Badge>
                   </td>
                   <td className="px-6 py-4">
@@ -137,27 +137,27 @@ const CropTable = ({ crops, farms, onEdit, onDelete }) => {
                   <ApperIcon name="Sprout" className="h-5 w-5 text-white" />
                 </div>
                 <div>
-                  <p className="font-semibold text-gray-900">{crop.cropType}</p>
-                  <p className="text-sm text-gray-500">{getFarmName(crop.farmId)}</p>
+<p className="font-semibold text-gray-900">{crop.crop_type_c || crop.cropType}</p>
+                  <p className="text-sm text-gray-500">{getFarmName(crop.farm_id_c?.Id || crop.farmId)}</p>
                 </div>
               </div>
-              <Badge variant={getStatusVariant(crop.status)}>
-                {crop.status}
+<Badge variant={getStatusVariant(crop.status_c || crop.status)}>
+                {crop.status_c || crop.status}
               </Badge>
             </div>
             
             <div className="grid grid-cols-2 gap-3 text-sm">
               <div>
                 <p className="text-gray-500">Field</p>
-                <p className="font-medium">{crop.field}</p>
+<p className="font-medium">{crop.field_c || crop.field}</p>
               </div>
               <div>
                 <p className="text-gray-500">Planted</p>
-                <p className="font-medium">{format(new Date(crop.plantingDate), "MMM dd")}</p>
+<p className="font-medium">{format(new Date(crop.planting_date_c || crop.plantingDate), "MMM dd")}</p>
               </div>
               <div className="col-span-2">
                 <p className="text-gray-500">Expected Harvest</p>
-                <p className="font-medium">{format(new Date(crop.expectedHarvest), "MMM dd, yyyy")}</p>
+<p className="font-medium">{format(new Date(crop.expected_harvest_c || crop.expectedHarvest), "MMM dd, yyyy")}</p>
               </div>
             </div>
 

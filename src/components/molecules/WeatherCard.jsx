@@ -54,33 +54,33 @@ const WeatherCard = ({ weather, index = 0 }) => {
         <CardContent className="p-4 text-center">
           <div className="space-y-3">
             <div className="text-sm font-medium text-gray-500">
-              {weather.date}
+{weather.date_c || weather.date}
             </div>
             
-            <div className={`w-12 h-12 mx-auto rounded-full bg-gradient-to-br ${getWeatherGradient(weather.condition)} flex items-center justify-center shadow-lg`}>
+<div className={`w-12 h-12 mx-auto rounded-full bg-gradient-to-br ${getWeatherGradient(weather.condition_c || weather.condition)} flex items-center justify-center shadow-lg`}>
               <ApperIcon 
-                name={getWeatherIcon(weather.condition)} 
+name={getWeatherIcon(weather.condition_c || weather.condition)}
                 className="h-6 w-6 text-white" 
               />
             </div>
 
             <div className="space-y-1">
               <div className="text-2xl font-bold text-gray-900">
-                {weather.temperature}°
+{weather.temperature_c || weather.temperature}°
               </div>
               <div className="text-sm text-gray-600 capitalize">
-                {weather.condition}
+{weather.condition_c || weather.condition}
               </div>
             </div>
 
             <div className="flex items-center justify-center space-x-3 text-xs text-gray-500">
               <div className="flex items-center">
                 <ApperIcon name="Droplets" className="h-3 w-3 mr-1" />
-                {weather.precipitation}%
+{weather.precipitation_c || weather.precipitation}%
               </div>
               <div className="flex items-center">
                 <ApperIcon name="Wind" className="h-3 w-3 mr-1" />
-                {weather.wind} mph
+{weather.wind_c || weather.wind} mph
               </div>
             </div>
           </div>

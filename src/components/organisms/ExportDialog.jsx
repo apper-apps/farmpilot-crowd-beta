@@ -37,15 +37,14 @@ const ExportDialog = ({ isOpen, onClose, transactions, farms }) => {
       setIsExporting(true);
 
       // Filter transactions by date range and type
-      const filteredTransactions = transactions.filter(transaction => {
-        const transactionDate = new Date(transaction.date);
+const filteredTransactions = transactions.filter(transaction => {
+        const transactionDate = new Date(transaction.date_c || transaction.date);
         const startDate = new Date(formData.startDate);
         const endDate = new Date(formData.endDate);
         
         const isInDateRange = transactionDate >= startDate && transactionDate <= endDate;
-        const isIncluded = (formData.includeIncome && transaction.type === "income") ||
-                          (formData.includeExpenses && transaction.type === "expense");
-        
+        const isIncluded = (formData.includeIncome && (transaction.type_c || transaction.type) === "income") ||
+                          (formData.includeExpenses && (transaction.type_c || transaction.type) === "expense");
         return isInDateRange && isIncluded;
       });
 

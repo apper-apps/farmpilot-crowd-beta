@@ -1,10 +1,11 @@
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
 import { format } from "date-fns";
+import { Card, CardContent } from "@/components/atoms/Card";
+import React from "react";
 import ApperIcon from "@/components/ApperIcon";
 import Badge from "@/components/atoms/Badge";
 import Button from "@/components/atoms/Button";
-import { Card, CardContent } from "@/components/atoms/Card";
 
 const TransactionList = ({ transactions, farms, onEdit, onDelete }) => {
   const getFarmName = (farmId) => {
@@ -57,7 +58,7 @@ const TransactionList = ({ transactions, farms, onEdit, onDelete }) => {
 
   // Group transactions by month
   const groupedTransactions = transactions.reduce((groups, transaction) => {
-    const monthKey = format(new Date(transaction.date), "yyyy-MM");
+const monthKey = format(new Date(transaction.date_c || transaction.date), "yyyy-MM");
     if (!groups[monthKey]) {
       groups[monthKey] = [];
     }
@@ -73,7 +74,7 @@ const TransactionList = ({ transactions, farms, onEdit, onDelete }) => {
         const monthTransactions = groupedTransactions[monthKey];
         const monthDate = new Date(monthKey + "-01");
         const monthTotal = monthTransactions.reduce((sum, t) => {
-          return sum + (t.type === "income" ? t.amount : -t.amount);
+return sum + ((t.type_c || t.type) === "income" ? (t.amount_c || t.amount) : -(t.amount_c || t.amount));
         }, 0);
 
         return (
@@ -94,7 +95,7 @@ const TransactionList = ({ transactions, farms, onEdit, onDelete }) => {
 
             <div className="space-y-3">
               {monthTransactions
-                .sort((a, b) => new Date(b.date) - new Date(a.date))
+.sort((a, b) => new Date(b.date_c || b.date) - new Date(a.date_c || a.date))
                 .map((transaction, index) => (
                 <motion.div
                   key={transaction.Id}
@@ -106,13 +107,13 @@ const TransactionList = ({ transactions, farms, onEdit, onDelete }) => {
                     <CardContent className="p-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">
-                          <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                            transaction.type === "income"
+<div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                            (transaction.type_c || transaction.type) === "income"
                               ? "bg-gradient-to-br from-secondary-500 to-secondary-600"
                               : "bg-gradient-to-br from-accent-500 to-accent-600"
                           }`}>
                             <ApperIcon 
-                              name={getTransactionIcon(transaction.category)} 
+name={getTransactionIcon(transaction.category_c || transaction.category)} 
                               className="h-5 w-5 text-white" 
                             />
                           </div>
@@ -120,15 +121,15 @@ const TransactionList = ({ transactions, farms, onEdit, onDelete }) => {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center space-x-3">
                               <h4 className="font-semibold text-gray-900">
-                                {transaction.description || transaction.category}
+{transaction.description_c || transaction.description || transaction.category_c || transaction.category}
                               </h4>
-                              <Badge variant={transaction.type === "income" ? "success" : "error"}>
-                                {transaction.category}
+                              <Badge variant={(transaction.type_c || transaction.type) === "income" ? "success" : "error"}>
+                                {transaction.category_c || transaction.category}
                               </Badge>
                             </div>
-                            <div className="flex items-center space-x-2 mt-1 text-sm text-gray-500">
+<div className="flex items-center space-x-2 mt-1 text-sm text-gray-500">
                               <ApperIcon name="Calendar" className="h-4 w-4" />
-                              <span>{format(new Date(transaction.date), "MMM dd, yyyy")}</span>
+                              <span>{format(new Date(transaction.date_c || transaction.date), "MMM dd, yyyy")}</span>
                               <span className="text-gray-300">•</span>
                               <span>{getFarmName(transaction.farmId)}</span>
                             </div>
@@ -137,14 +138,14 @@ const TransactionList = ({ transactions, farms, onEdit, onDelete }) => {
 
                         <div className="flex items-center space-x-4">
                           <div className={`text-right ${
-                            transaction.type === "income" ? "text-secondary-600" : "text-accent-600"
+                            (transaction.type_c || transaction.type) === "income" ? "text-secondary-600" : "text-accent-600"
                           }`}>
                             <div className="text-lg font-bold">
-                              {transaction.type === "income" ? "+" : "-"}
-                              {formatCurrency(transaction.amount)}
+                              {(transaction.type_c || transaction.type) === "income" ? "+" : "-"}
+                              {formatCurrency(transaction.amount_c || transaction.amount)}
                             </div>
                             <div className="text-xs text-gray-500 uppercase">
-                              {transaction.type}
+                              {transaction.type_c || transaction.type}
                             </div>
                           </div>
                           

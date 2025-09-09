@@ -1,67 +1,212 @@
-import farmsData from "@/services/mockData/farms.json";
-
 class FarmService {
   constructor() {
-    this.farms = [...farmsData];
-    this.delay = 300;
+    this.tableName = 'farm_c';
+    this.apperClient = null;
+    this.initializeClient();
+  }
+
+  initializeClient() {
+    const { ApperClient } = window.ApperSDK;
+    this.apperClient = new ApperClient({
+      apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+      apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+    });
   }
 
   async getAll() {
-    await new Promise(resolve => setTimeout(resolve, this.delay));
-    return [...this.farms];
+    try {
+      const params = {
+        fields: [
+          { field: { Name: "Name" } },
+          { field: { Name: "name_c" } },
+          { field: { Name: "size_c" } },
+          { field: { Name: "size_unit_c" } },
+          { field: { Name: "location_c" } },
+          { field: { Name: "created_at_c" } }
+        ],
+        orderBy: [
+          { fieldName: "CreatedOn", sorttype: "DESC" }
+        ]
+      };
+
+      const response = await this.apperClient.fetchRecords(this.tableName, params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      // Transform data to match UI expectations
+      return response.data.map(farm => ({
+        Id: farm.Id,
+        name: farm.name_c || farm.Name,
+        size: farm.size_c || 0,
+        sizeUnit: farm.size_unit_c || 'acres',
+        location: farm.location_c || '',
+        createdAt: farm.created_at_c || farm.CreatedOn
+      }));
+    } catch (error) {
+      console.error("Error fetching farms:", error);
+      throw error;
+    }
   }
 
   async getById(id) {
-    await new Promise(resolve => setTimeout(resolve, this.delay));
-    const farm = this.farms.find(f => f.Id === parseInt(id));
-    if (!farm) {
-      throw new Error("Farm not found");
+    try {
+      const params = {
+        fields: [
+          { field: { Name: "Name" } },
+          { field: { Name: "name_c" } },
+          { field: { Name: "size_c" } },
+          { field: { Name: "size_unit_c" } },
+          { field: { Name: "location_c" } },
+          { field: { Name: "created_at_c" } }
+        ]
+      };
+
+      const response = await this.apperClient.getRecordById(this.tableName, id, params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      const farm = response.data;
+      return {
+        Id: farm.Id,
+        name: farm.name_c || farm.Name,
+        size: farm.size_c || 0,
+        sizeUnit: farm.size_unit_c || 'acres',
+        location: farm.location_c || '',
+        createdAt: farm.created_at_c || farm.CreatedOn
+      };
+    } catch (error) {
+      console.error(`Error fetching farm with ID ${id}:`, error);
+      throw error;
     }
-    return { ...farm };
   }
 
   async create(farmData) {
-    await new Promise(resolve => setTimeout(resolve, this.delay));
-    
-    const newId = Math.max(...this.farms.map(f => f.Id), 0) + 1;
-    const newFarm = {
-      Id: newId,
-      ...farmData,
-      createdAt: farmData.createdAt || new Date().toISOString()
-    };
-    
-    this.farms.push(newFarm);
-    return { ...newFarm };
+    try {
+      const params = {
+        records: [{
+          Name: farmData.name,
+          name_c: farmData.name,
+          size_c: parseFloat(farmData.size),
+          size_unit_c: farmData.sizeUnit,
+          location_c: farmData.location,
+          created_at_c: new Date().toISOString()
+        }]
+      };
+
+      const response = await this.apperClient.createRecord(this.tableName, params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      if (response.results) {
+        const successfulRecords = response.results.filter(result => result.success);
+        const failedRecords = response.results.filter(result => !result.success);
+        
+        if (failedRecords.length > 0) {
+          console.error(`Failed to create farms ${failedRecords.length} records:${JSON.stringify(failedRecords)}`);
+        }
+        
+        if (successfulRecords.length > 0) {
+          const farm = successfulRecords[0].data;
+          return {
+            Id: farm.Id,
+            name: farm.name_c || farm.Name,
+            size: farm.size_c || 0,
+            sizeUnit: farm.size_unit_c || 'acres',
+            location: farm.location_c || '',
+            createdAt: farm.created_at_c || farm.CreatedOn
+          };
+        }
+      }
+    } catch (error) {
+      console.error("Error creating farm:", error);
+      throw error;
+    }
   }
 
   async update(id, farmData) {
-    await new Promise(resolve => setTimeout(resolve, this.delay));
-    
-    const index = this.farms.findIndex(f => f.Id === parseInt(id));
-    if (index === -1) {
-      throw new Error("Farm not found");
+    try {
+      const params = {
+        records: [{
+          Id: parseInt(id),
+          Name: farmData.name,
+          name_c: farmData.name,
+          size_c: parseFloat(farmData.size),
+          size_unit_c: farmData.sizeUnit,
+          location_c: farmData.location
+        }]
+      };
+
+      const response = await this.apperClient.updateRecord(this.tableName, params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      if (response.results) {
+        const successfulRecords = response.results.filter(result => result.success);
+        const failedRecords = response.results.filter(result => !result.success);
+        
+        if (failedRecords.length > 0) {
+          console.error(`Failed to update farms ${failedRecords.length} records:${JSON.stringify(failedRecords)}`);
+        }
+        
+        if (successfulRecords.length > 0) {
+          const farm = successfulRecords[0].data;
+          return {
+            Id: farm.Id,
+            name: farm.name_c || farm.Name,
+            size: farm.size_c || 0,
+            sizeUnit: farm.size_unit_c || 'acres',
+            location: farm.location_c || '',
+            createdAt: farm.created_at_c || farm.CreatedOn
+          };
+        }
+      }
+    } catch (error) {
+      console.error("Error updating farm:", error);
+      throw error;
     }
-    
-    this.farms[index] = {
-      ...this.farms[index],
-      ...farmData,
-      Id: parseInt(id)
-    };
-    
-    return { ...this.farms[index] };
   }
 
   async delete(id) {
-    await new Promise(resolve => setTimeout(resolve, this.delay));
-    
-    const index = this.farms.findIndex(f => f.Id === parseInt(id));
-    if (index === -1) {
-      throw new Error("Farm not found");
+    try {
+      const params = {
+        RecordIds: [parseInt(id)]
+      };
+
+      const response = await this.apperClient.deleteRecord(this.tableName, params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      if (response.results) {
+        const failedRecords = response.results.filter(result => !result.success);
+        
+        if (failedRecords.length > 0) {
+          console.error(`Failed to delete farms ${failedRecords.length} records:${JSON.stringify(failedRecords)}`);
+          return false;
+        }
+        
+        return true;
+      }
+    } catch (error) {
+      console.error("Error deleting farm:", error);
+      throw error;
     }
-    
-    this.farms.splice(index, 1);
-    return true;
   }
 }
 
+export default new FarmService();
 export default new FarmService();
