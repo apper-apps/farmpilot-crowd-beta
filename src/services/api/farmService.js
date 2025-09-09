@@ -207,6 +207,4 @@ class FarmService {
     }
   }
 }
-
-export default new FarmService();
 export default new FarmService();

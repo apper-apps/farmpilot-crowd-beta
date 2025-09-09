@@ -2,19 +2,19 @@ import React, { createContext, useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
-import { clearUser, setUser } from "./store/userSlice";
-import Login from "@/components/pages/Login";
+import { clearUser, setUser } from "@/store/userSlice";
+import Layout from "@/components/Layout";
 import Signup from "@/components/pages/Signup";
 import Callback from "@/components/pages/Callback";
-import ErrorPage from "@/components/pages/ErrorPage";
-import ResetPassword from "@/components/pages/ResetPassword";
-import PromptPassword from "@/components/pages/PromptPassword";
-import Layout from "@/components/Layout";
 import Finance from "@/components/pages/Finance";
+import ResetPassword from "@/components/pages/ResetPassword";
+import ErrorPage from "@/components/pages/ErrorPage";
 import Dashboard from "@/components/pages/Dashboard";
 import Crops from "@/components/pages/Crops";
 import Weather from "@/components/pages/Weather";
+import Login from "@/components/pages/Login";
 import Farms from "@/components/pages/Farms";
+import PromptPassword from "@/components/pages/PromptPassword";
 import Tasks from "@/components/pages/Tasks";
 import Equipment from "@/components/pages/Equipment";
 
@@ -138,7 +138,7 @@ function AppRoutes() {
           <Route path="finance" element={<Finance />} />
           <Route path="weather" element={<Weather />} />
 <Route path="equipment" element={<Equipment />} />
-        </Route>
+</Route>
         </Routes>
         
         <ToastContainer
@@ -154,7 +154,6 @@ function AppRoutes() {
           style={{ zIndex: 9999 }}
         />
       </AuthContext.Provider>
-    </Routes>
   );
 }
 
@@ -165,7 +164,5 @@ function App() {
     </BrowserRouter>
   );
 }
-
-export default App;
 
 export default App;
